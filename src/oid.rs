@@ -1,67 +1,15 @@
 use once_cell::sync::Lazy;
 use yasna::models::ObjectIdentifier;
 
-// === RSA (PKCS#1) ===
-pub static RSA_ENCRYPTION: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 1]));
-pub static MD5_WITH_RSA_ENCRYPTION: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 4]));
-pub static SHA1_WITH_RSA_ENCRYPTION: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 5]));
-pub static SHA224_WITH_RSA_ENC: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 14]));
-pub static SHA256_WITH_RSA_ENC: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 11]));
-pub static SHA384_WITH_RSA_ENC: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 12]));
-pub static SHA512_WITH_RSA_ENC: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 13]));
-pub static RSASSA_PSS: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 1, 10]));
-
 // === DIGESTS ===
-pub static SHA1: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 3, 14, 3, 2, 26]));
-pub static SHA224: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[2, 16, 840, 1, 101, 3, 4, 2, 4]));
-pub static SHA256: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[2, 16, 840, 1, 101, 3, 4, 2, 1]));
-pub static SHA384: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[2, 16, 840, 1, 101, 3, 4, 2, 2]));
-pub static SHA512: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[2, 16, 840, 1, 101, 3, 4, 2, 3]));
-
-// === ECDSA ===
-pub static EC_PUBLIC_KEY: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 10045, 2, 1]));
-pub static ECDSA_WITH_SHA1: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 10045, 4, 1]));
-pub static ECDSA_WITH_SHA224: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 10045, 4, 3, 1]));
-pub static ECDSA_WITH_SHA256: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 10045, 4, 3, 2]));
-pub static ECDSA_WITH_SHA384: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 10045, 4, 3, 3]));
-pub static ECDSA_WITH_SHA512: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 10045, 4, 3, 4]));
-
-// === EC CURVES ===
-pub static PRIME256V1: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 10045, 3, 1, 7]));
-pub static SECP384R1: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 3, 132, 0, 34]));
-pub static SECP521R1: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 3, 132, 0, 35]));
+pub static SHA3_256: Lazy<ObjectIdentifier> =
+    Lazy::new(|| ObjectIdentifier::from_slice(&[2, 16, 840, 1, 101, 3, 4, 2, 8]));
+pub static SHA3_512: Lazy<ObjectIdentifier> =
+    Lazy::new(|| ObjectIdentifier::from_slice(&[2, 16, 840, 1, 101, 3, 4, 2, 10]));
 
 // === EDDSA ===
 pub static ED25519: Lazy<ObjectIdentifier> =
     Lazy::new(|| ObjectIdentifier::from_slice(&[1, 3, 101, 112]));
-pub static ED448: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 3, 101, 113]));
-
-// === PKCS#8 ===
-pub static PKCS8_PRIVATE_KEY: Lazy<ObjectIdentifier> =
-    Lazy::new(|| ObjectIdentifier::from_slice(&[1, 2, 840, 113549, 1, 5, 13]));
 
 // === EXTENSIONS (RFC 5280) ===
 pub static SUBJECT_KEY_ID: Lazy<ObjectIdentifier> =

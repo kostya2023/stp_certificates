@@ -1,5 +1,8 @@
 pub mod eddsa;
-pub mod falcon;
+pub mod fndsa;
+pub mod mldsa;
+pub mod slh_dsa_sha2;
+pub mod slh_dsa_shake;
 use crate::Error;
 
 pub trait AlgKeypair: Sized {

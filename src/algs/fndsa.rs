@@ -1,4 +1,4 @@
-// algs/falcon.rs
+// algs/fndsa.rs
 
 use crate::algs::AlgKeypair;
 use crate::highlevel_keys::AlgorithmIdentifier;
@@ -18,17 +18,17 @@ use pqcrypto_traits::sign::{
 };
 use zeroize::{Zeroize, Zeroizing};
 
-pub struct Falcon512Keypair {
+pub struct FNDSA512Keypair {
     pub public_key: Vec<u8>,
     private_key: Zeroizing<Vec<u8>>,
 }
 
-pub struct Falcon1024Keypair {
+pub struct FNDSA1024Keypair {
     pub public_key: Vec<u8>,
     private_key: Zeroizing<Vec<u8>>,
 }
 
-impl AlgKeypair for Falcon512Keypair {
+impl AlgKeypair for FNDSA512Keypair {
     // FNDSA
     fn generate() -> Result<Self, crate::Error> {
         let (public, private) = falcon512::keypair();
@@ -98,12 +98,6 @@ impl AlgKeypair for Falcon512Keypair {
             ));
         }
 
-        if self.public_key.is_empty() {
-            return Err(crate::Error::PublicKeyError(
-                "Public key not init!".to_string(),
-            ));
-        }
-
         let signature = falcon512::detached_sign(
             &msg,
             &SecretKeyF512::from_bytes(&self.private_key).map_err(|_| {
@@ -148,7 +142,7 @@ impl AlgKeypair for Falcon512Keypair {
     }
 }
 
-impl AlgKeypair for Falcon1024Keypair {
+impl AlgKeypair for FNDSA1024Keypair {
     // FNDSA
     fn generate() -> Result<Self, crate::Error> {
         let (public, private) = falcon1024::keypair();
