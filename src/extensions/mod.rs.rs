@@ -1,4 +1,4 @@
-// extensions.rs
+// extensions/mod.rs
 
 use yasna::{ASN1Error, ASN1ErrorKind, models::ObjectIdentifier};
 
