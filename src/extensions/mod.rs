@@ -3,6 +3,7 @@
 /// mods
 pub mod basic_constraints;
 pub mod key_usage;
+pub mod extended_key_usage;
 
 /// trait extension
 pub trait ExtensionTrait: Sized {
