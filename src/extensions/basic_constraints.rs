@@ -13,6 +13,14 @@ impl BasicConstraints {
     pub fn new(ca: bool, path_len_constraint: Option<u64>) -> Self {
         Self { ca, path_len_constraint }
     }
+
+    pub fn is_ca(&self) -> bool {
+        self.ca
+    }
+
+    pub fn path_len_constraint(&self) -> Option<u64> {
+        self.path_len_constraint
+    }
 }
 
 impl ExtensionTrait for BasicConstraints {

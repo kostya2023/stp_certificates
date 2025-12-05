@@ -11,3 +11,12 @@ pub struct KeyUsage {
     crl_sign: bool
 }
 
+impl KeyUsage {
+    pub fn new(digital_signature: bool, key_cert_sign: bool, crl_sign: bool) -> Self {
+        return KeyUsage { digital_signature, key_cert_sign, crl_sign }
+    }
+}
+
+// impl ExtensionTrait for KeyUsage {
+
+// }
