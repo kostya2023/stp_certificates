@@ -9,6 +9,12 @@ pub struct BasicConstraints {
     path_len_constraint: Option<u64>,
 }
 
+impl BasicConstraints {
+    pub fn new(ca: bool, path_len_constraint: Option<u64>) -> Self {
+        Self { ca, path_len_constraint }
+    }
+}
+
 impl ExtensionTrait for BasicConstraints {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
