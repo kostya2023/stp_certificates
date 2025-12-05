@@ -20,7 +20,9 @@ impl AlgKeypair for Ed25519 {
     fn generate() -> Result<Self, Error> {
         let mut csprng = OsRng;
         let mut random: [u8; 32] = [0; SECRET_KEY_LENGTH];
-        let _ = csprng.try_fill_bytes(&mut random).map_err(|_| Error::RandError)?;
+        let _ = csprng
+            .try_fill_bytes(&mut random)
+            .map_err(|_| Error::RandError)?;
         let private = SigningKey::from_bytes(&random);
         let public = private.verifying_key();
         Ok(Self {
@@ -115,6 +117,3 @@ impl AlgKeypair for Ed25519 {
         self.private_key.zeroize();
     }
 }
-
-
-

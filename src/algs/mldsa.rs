@@ -5,44 +5,46 @@ use crate::algs::AlgKeypair;
 use crate::highlevel_keys::AlgorithmIdentifier;
 use crate::highlevel_keys::privatekey::PrivateKeyInfo;
 use crate::highlevel_keys::publickey::SubjectPublicKeyInfo;
+use pqcrypto_mldsa::mldsa44;
 use pqcrypto_mldsa::mldsa44::DetachedSignature as DetachedSignatureD2;
 use pqcrypto_mldsa::mldsa44::PublicKey as PublicKeyD2;
 use pqcrypto_mldsa::mldsa44::SecretKey as SecretKeyD2;
+use pqcrypto_mldsa::mldsa65;
 use pqcrypto_mldsa::mldsa65::DetachedSignature as DetachedSignatureD3;
 use pqcrypto_mldsa::mldsa65::PublicKey as PublicKeyD3;
 use pqcrypto_mldsa::mldsa65::SecretKey as SecretKeyD3;
+use pqcrypto_mldsa::mldsa87;
 use pqcrypto_mldsa::mldsa87::DetachedSignature as DetachedSignatureD5;
 use pqcrypto_mldsa::mldsa87::PublicKey as PublicKeyD5;
 use pqcrypto_mldsa::mldsa87::SecretKey as SecretKeyD5;
-use pqcrypto_mldsa::mldsa44;
-use pqcrypto_mldsa::mldsa65;
-use pqcrypto_mldsa::mldsa87;
 use pqcrypto_traits::sign::{
     DetachedSignature as DetachedSignatureTrait, PublicKey as PublicKeyTrait,
     SecretKey as SecretKeyTrait,
 };
 use zeroize::{Zeroize, Zeroizing};
 
-
 pub struct MLDSA44Keypair {
     pub public_key: Vec<u8>,
-    private_key: Zeroizing<Vec<u8>>
+    private_key: Zeroizing<Vec<u8>>,
 }
 
 pub struct MLDSA65Keypair {
     pub public_key: Vec<u8>,
-    private_key: Zeroizing<Vec<u8>>
+    private_key: Zeroizing<Vec<u8>>,
 }
 
 pub struct MLDSA87Keypair {
     pub public_key: Vec<u8>,
-    private_key: Zeroizing<Vec<u8>>
+    private_key: Zeroizing<Vec<u8>>,
 }
 
 impl AlgKeypair for MLDSA44Keypair {
     fn generate() -> Result<Self, Error> {
         let (public, private) = mldsa44::keypair();
-        Ok(Self { public_key: public.as_bytes().to_vec(), private_key: Zeroizing::new(private.as_bytes().to_vec()) })
+        Ok(Self {
+            public_key: public.as_bytes().to_vec(),
+            private_key: Zeroizing::new(private.as_bytes().to_vec()),
+        })
     }
 
     fn private_key_der(&self) -> Result<Vec<u8>, Error> {
@@ -52,14 +54,13 @@ impl AlgKeypair for MLDSA44Keypair {
             ));
         }
 
-        Ok(
-            PrivateKeyInfo::new(
-                0u64, 
-                AlgorithmIdentifier::new(crate::oid::MLDSA_44.clone(), None), 
-                &self.private_key, 
-                None
-            ).to_der()
+        Ok(PrivateKeyInfo::new(
+            0u64,
+            AlgorithmIdentifier::new(crate::oid::MLDSA_44.clone(), None),
+            &self.private_key,
+            None,
         )
+        .to_der())
     }
 
     fn from_keypair_der(private_key: Vec<u8>, public_key: Vec<u8>) -> Result<Self, Error> {
@@ -151,12 +152,13 @@ impl AlgKeypair for MLDSA44Keypair {
     }
 }
 
-
-
 impl AlgKeypair for MLDSA65Keypair {
     fn generate() -> Result<Self, Error> {
         let (public, private) = mldsa65::keypair();
-        Ok(Self { public_key: public.as_bytes().to_vec(), private_key: Zeroizing::new(private.as_bytes().to_vec()) })
+        Ok(Self {
+            public_key: public.as_bytes().to_vec(),
+            private_key: Zeroizing::new(private.as_bytes().to_vec()),
+        })
     }
 
     fn private_key_der(&self) -> Result<Vec<u8>, Error> {
@@ -166,14 +168,13 @@ impl AlgKeypair for MLDSA65Keypair {
             ));
         }
 
-        Ok(
-            PrivateKeyInfo::new(
-                0u64, 
-                AlgorithmIdentifier::new(crate::oid::MLDSA_65.clone(), None), 
-                &self.private_key, 
-                None
-            ).to_der()
+        Ok(PrivateKeyInfo::new(
+            0u64,
+            AlgorithmIdentifier::new(crate::oid::MLDSA_65.clone(), None),
+            &self.private_key,
+            None,
         )
+        .to_der())
     }
 
     fn from_keypair_der(private_key: Vec<u8>, public_key: Vec<u8>) -> Result<Self, Error> {
@@ -265,13 +266,13 @@ impl AlgKeypair for MLDSA65Keypair {
     }
 }
 
-
-
-
 impl AlgKeypair for MLDSA87Keypair {
     fn generate() -> Result<Self, Error> {
         let (public, private) = mldsa87::keypair();
-        Ok(Self { public_key: public.as_bytes().to_vec(), private_key: Zeroizing::new(private.as_bytes().to_vec()) })
+        Ok(Self {
+            public_key: public.as_bytes().to_vec(),
+            private_key: Zeroizing::new(private.as_bytes().to_vec()),
+        })
     }
 
     fn private_key_der(&self) -> Result<Vec<u8>, Error> {
@@ -281,14 +282,13 @@ impl AlgKeypair for MLDSA87Keypair {
             ));
         }
 
-        Ok(
-            PrivateKeyInfo::new(
-                0u64, 
-                AlgorithmIdentifier::new(crate::oid::MLDSA_87.clone(), None), 
-                &self.private_key, 
-                None
-            ).to_der()
+        Ok(PrivateKeyInfo::new(
+            0u64,
+            AlgorithmIdentifier::new(crate::oid::MLDSA_87.clone(), None),
+            &self.private_key,
+            None,
         )
+        .to_der())
     }
 
     fn from_keypair_der(private_key: Vec<u8>, public_key: Vec<u8>) -> Result<Self, Error> {
