@@ -15,6 +15,10 @@ impl KeyUsage {
     pub fn new(digital_signature: bool, key_cert_sign: bool, crl_sign: bool) -> Self {
         return KeyUsage { digital_signature, key_cert_sign, crl_sign }
     }
+
+    pub fn is_digital_signature(&self) -> bool {
+        self.digital_signature
+    }
 }
 
 // impl ExtensionTrait for KeyUsage {
