@@ -24,6 +24,9 @@ impl KeyUsage {
         self.key_cert_sign
     }
 
+    pub fn is_crl_sign(&self) -> bool {
+        self.crl_sign
+    }
 }
 
 // impl ExtensionTrait for KeyUsage {
