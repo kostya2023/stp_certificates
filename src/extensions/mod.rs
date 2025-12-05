@@ -6,10 +6,8 @@ pub mod key_usage;
 
 /// trait extension
 pub trait ExtensionTrait: Sized {
-    /// Encode internal ASN.1 structure into DER (not wrapped in OCTET STRING)
     fn to_der(&self) -> Vec<u8>;
 
-    /// Decode internal ASN.1 DER (WITHOUT OCTET STRING wrapper)
     fn from_der(der: &[u8]) -> Result<Self, Error>;
 }
 
