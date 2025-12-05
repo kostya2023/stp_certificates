@@ -2,8 +2,8 @@
 
 /// mods
 pub mod basic_constraints;
-pub mod key_usage;
 pub mod extended_key_usage;
+pub mod key_usage;
 pub mod subject_alternative_name;
 
 /// trait extension
@@ -13,9 +13,8 @@ pub trait ExtensionTrait: Sized {
     fn from_der(der: &[u8]) -> Result<Self, Error>;
 }
 
-
-use yasna::{ASN1Error, ASN1ErrorKind, models::ObjectIdentifier};
 use crate::{ASN1Wrapper, Error};
+use yasna::{ASN1Error, ASN1ErrorKind, models::ObjectIdentifier};
 
 /// Basic extension
 pub struct Extension {

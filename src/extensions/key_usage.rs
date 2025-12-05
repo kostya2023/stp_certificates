@@ -1,19 +1,22 @@
 // extensions/key_usage.rs
 
-use yasna;
 use crate::Error;
 use crate::extensions::ExtensionTrait;
-
+use yasna;
 
 pub struct KeyUsage {
     digital_signature: bool,
     key_cert_sign: bool,
-    crl_sign: bool
+    crl_sign: bool,
 }
 
 impl KeyUsage {
     pub fn new(digital_signature: bool, key_cert_sign: bool, crl_sign: bool) -> Self {
-        return KeyUsage { digital_signature, key_cert_sign, crl_sign }
+        return KeyUsage {
+            digital_signature,
+            key_cert_sign,
+            crl_sign,
+        };
     }
 
     pub fn is_digital_signature(&self) -> bool {
@@ -41,14 +44,19 @@ impl ExtensionTrait for KeyUsage {
     }
 
     fn from_der(der: &[u8]) -> Result<Self, Error> {
-        let result = yasna::parse_der( der, |reader| {
+        let result = yasna::parse_der(der, |reader| {
             reader.read_sequence(|seq_read| {
                 let ds = seq_read.next().read_bool()?;
                 let kcs = seq_read.next().read_bool()?;
                 let cs = seq_read.next().read_bool()?;
                 Ok((ds, kcs, cs))
             })
-        }).map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
-        Ok( Self { digital_signature: result.0, key_cert_sign: result.1, crl_sign: result.2 })
+        })
+        .map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
+        Ok(Self {
+            digital_signature: result.0,
+            key_cert_sign: result.1,
+            crl_sign: result.2,
+        })
     }
 }

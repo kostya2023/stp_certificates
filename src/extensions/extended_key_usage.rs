@@ -1,8 +1,8 @@
 // extensions/extended_key_usage.rs
 
-use yasna;
 use crate::Error;
 use crate::extensions::ExtensionTrait;
+use yasna;
 
 pub struct ExtendedKeyUsage {
     server_auth: bool,
@@ -12,8 +12,18 @@ pub struct ExtendedKeyUsage {
 }
 
 impl ExtendedKeyUsage {
-    pub fn new(server_auth: bool, client_auth: bool, code_signing: bool, ocsp_signing: bool) -> Self {
-        Self { server_auth, client_auth, code_signing, ocsp_signing }
+    pub fn new(
+        server_auth: bool,
+        client_auth: bool,
+        code_signing: bool,
+        ocsp_signing: bool,
+    ) -> Self {
+        Self {
+            server_auth,
+            client_auth,
+            code_signing,
+            ocsp_signing,
+        }
     }
 
     pub fn is_server_auth(&self) -> bool {
@@ -54,7 +64,13 @@ impl ExtensionTrait for ExtendedKeyUsage {
                 let oa = seq_read.next().read_bool()?;
                 Ok((sa, clia, coda, oa))
             })
-        }).map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
-        Ok( Self { server_auth: result.0, client_auth: result.1, code_signing: result.2, ocsp_signing: result.3 } )
+        })
+        .map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
+        Ok(Self {
+            server_auth: result.0,
+            client_auth: result.1,
+            code_signing: result.2,
+            ocsp_signing: result.3,
+        })
     }
 }
