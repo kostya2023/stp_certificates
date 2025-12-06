@@ -26,6 +26,9 @@ pub enum Error {
     InvalidAlgorithmError,
     #[error("Rand Error")]
     RandError,
+
+    #[error("Parse IPVersion error")]
+    IPVersionError,
 }
 
 // mods
@@ -34,6 +37,33 @@ pub mod certs;
 pub mod extensions;
 pub mod highlevel_keys;
 pub mod oid;
+
+/// Types and enums...
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum IPVersion {
+    V4,
+    V6,
+}
+
+impl IPVersion {
+    #[inline]
+    pub fn to_int(&self) -> u8 {
+        match self {
+            IPVersion::V4 => 4,
+            IPVersion::V6 => 6,
+        }
+    }
+
+    #[inline]
+    pub fn from_int(int: u8) -> Result<Self, Error> {
+        match int {
+            4 => Ok(IPVersion::V4),
+            6 => Ok(IPVersion::V6),
+            _ => Err(Error::IPVersionError)
+        }
+    }
+}
+
 
 /// Костыль
 #[derive(Debug)]
