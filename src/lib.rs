@@ -64,6 +64,10 @@ impl IPVersion {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct IPAddress {
+    
+}
 
 /// Костыль, но жить можно.
 #[derive(Debug)]
