@@ -3,3 +3,8 @@
 use crate::Error;
 use crate::extensions::ExtensionTrait;
 use yasna;
+
+pub struct SubjectAlternativeName {
+    dns_name: String,
+    // ip_address: 
+}
