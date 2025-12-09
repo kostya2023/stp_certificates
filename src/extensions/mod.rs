@@ -7,6 +7,7 @@ pub mod key_usage;
 pub mod subject_alternative_name;
 pub mod subject_key_identifier;
 pub mod authority_key_identifier;
+pub mod crl_distribution_points;
 
 /// trait extension
 pub trait ExtensionTrait: Sized {
