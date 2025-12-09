@@ -23,3 +23,26 @@ impl AuthorityKeyIdentifier {
         self.key_identifier.clone()
     }
 }
+
+impl ExtensionTrait for AuthorityKeyIdentifier {
+    fn to_der(&self) -> Vec<u8> {
+        yasna::construct_der(|writer| {
+            writer.write_sequence(|seq| {
+                seq.next().write_oid(&self.hash_algorithm);
+                seq.next().write_bytes(&self.key_identifier);
+            })
+        })
+    }
+
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
+        let result = yasna::parse_der(&der, |reader| {
+            reader.read_sequence(|seq_reader| {
+                let hi = seq_reader.next().read_oid()?;
+                let ki = seq_reader.next().read_bytes()?;
+                Ok((hi, ki))
+            })
+        })
+        .map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
+        Ok(Self { hash_algorithm: result.0, key_identifier: result.1 })
+    }
+}
