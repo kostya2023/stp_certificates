@@ -5,7 +5,7 @@ use crate::extensions::ExtensionTrait;
 use yasna;
 
 pub struct SubjectKeyIdentifier {
-    key_identifier: Vec<u8>
+    key_identifier: Vec<u8>,
 }
 
 impl SubjectKeyIdentifier {
