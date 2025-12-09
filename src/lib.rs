@@ -27,8 +27,8 @@ pub enum Error {
     #[error("Rand Error")]
     RandError,
 
-    #[error("Parse IPVersion error")]
-    IPVersionError,
+    #[error("Duration Since Error")]
+    DurationSinceError
 }
 
 // mods
