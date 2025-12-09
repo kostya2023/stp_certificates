@@ -71,4 +71,12 @@ impl Validity {
             not_after,
         })
     }
+
+    pub fn check_expired(&self, now: SystemTime) -> Result<bool, Error> {
+        if now < self.not_before || now > self.not_after {
+            return Err(Error::CheckExpiredError("Validity time".to_string()));
+        }
+
+        Ok(true)
+    }
 }

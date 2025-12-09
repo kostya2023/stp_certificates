@@ -28,7 +28,9 @@ pub enum Error {
     RandError,
 
     #[error("Duration Since Error")]
-    DurationSinceError
+    DurationSinceError,
+    #[error("Expired error: {0}")]
+    CheckExpiredError(String),
 }
 
 // mods
