@@ -5,6 +5,7 @@ pub mod basic_constraints;
 pub mod extended_key_usage;
 pub mod key_usage;
 pub mod subject_alternative_name;
+pub mod subject_key_identifier;
 
 /// trait extension
 pub trait ExtensionTrait: Sized {
