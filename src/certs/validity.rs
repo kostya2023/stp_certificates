@@ -1,7 +1,7 @@
 // certs/validity.rs
 
-use std::time::{SystemTime, UNIX_EPOCH};
 use crate::Error;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct Validity {
     not_before: SystemTime,
@@ -11,7 +11,10 @@ pub struct Validity {
 impl Validity {
     pub fn new(not_after: SystemTime) -> Self {
         let not_before = SystemTime::now();
-        Self { not_before, not_after }
+        Self {
+            not_before,
+            not_after,
+        }
     }
 
     pub fn not_before(&self) -> SystemTime {
@@ -23,8 +26,16 @@ impl Validity {
     }
 
     pub fn to_der(&self) -> Result<Vec<u8>, Error> {
-        let not_bfr = self.not_before.duration_since(UNIX_EPOCH).map_err(|_| Error::DurationSinceError)?.as_secs() as i64;
-        let not_ftr = self.not_after.duration_since(UNIX_EPOCH).map_err(|_| Error::DurationSinceError)?.as_secs() as i64;
+        let not_bfr = self
+            .not_before
+            .duration_since(UNIX_EPOCH)
+            .map_err(|_| Error::DurationSinceError)?
+            .as_secs() as i64;
+        let not_ftr = self
+            .not_after
+            .duration_since(UNIX_EPOCH)
+            .map_err(|_| Error::DurationSinceError)?
+            .as_secs() as i64;
         let result = yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {
                 seq.next().write_i64(not_bfr);

@@ -1,13 +1,13 @@
 // extensions/mod.rs
 
+pub mod authority_key_identifier;
 /// mods
 pub mod basic_constraints;
+pub mod crl_distribution_points;
 pub mod extended_key_usage;
 pub mod key_usage;
 pub mod subject_alternative_name;
 pub mod subject_key_identifier;
-pub mod authority_key_identifier;
-pub mod crl_distribution_points;
 
 /// trait extension
 pub trait ExtensionTrait: Sized {
@@ -76,7 +76,6 @@ impl Extension {
     }
 }
 
-
 impl Extensions {
     pub fn new(extensions: Vec<Extension>) -> Self {
         Self { extensions }
@@ -100,8 +99,7 @@ impl Extensions {
         let extensions = yasna::parse_der(der, |reader| {
             reader.collect_sequence_of(|seq| {
                 seq.read_der().and_then(|bytes| {
-                    Extension::from_der(&bytes)
-                        .map_err(|_| ASN1Error::new(ASN1ErrorKind::Invalid))
+                    Extension::from_der(&bytes).map_err(|_| ASN1Error::new(ASN1ErrorKind::Invalid))
                 })
             })
         })

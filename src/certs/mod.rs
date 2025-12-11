@@ -1,8 +1,8 @@
 // certs/mod.rs
 
 pub mod generate;
-pub mod verify;
 pub mod validity;
+pub mod verify;
 
 pub enum Version {
     V3,
@@ -15,4 +15,3 @@ impl Version {
         }
     }
 }
-

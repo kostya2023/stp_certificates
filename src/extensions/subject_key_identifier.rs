@@ -35,6 +35,8 @@ impl ExtensionTrait for SubjectKeyIdentifier {
             })
         })
         .map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
-        Ok(Self { key_identifier: result })
+        Ok(Self {
+            key_identifier: result,
+        })
     }
 }

@@ -2,8 +2,8 @@
 
 use crate::Error;
 use crate::extensions::ExtensionTrait;
-use yasna;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use yasna;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SubjectAlternativeName {
@@ -60,33 +60,36 @@ impl ExtensionTrait for SubjectAlternativeName {
     }
 
     fn from_der(der: &[u8]) -> Result<Self, Error> {
-        let (dns, ip, email, uri, dn, rid, on) =
-            yasna::parse_der(der, |reader| {
-                reader.read_sequence(|seq| {
-                    let dns = seq.next().read_ia5_string()?;
+        let (dns, ip, email, uri, dn, rid, on) = yasna::parse_der(der, |reader| {
+            reader.read_sequence(|seq| {
+                let dns = seq.next().read_ia5_string()?;
 
-                    let ip_bytes = seq.next().read_bytes()?;
-                    let ip = match ip_bytes.len() {
-                        4 => IpAddr::V4(Ipv4Addr::new(
-                            ip_bytes[0], ip_bytes[1], ip_bytes[2], ip_bytes[3],
-                        )),
-                        16 => {
-                            let mut arr = [0u8; 16];
-                            arr.copy_from_slice(&ip_bytes);
-                            IpAddr::V6(Ipv6Addr::from(arr))
-                        }
-                        _ => return Err(yasna::ASN1Error::new(yasna::ASN1ErrorKind::Invalid)),
-                    };
+                let ip_bytes = seq.next().read_bytes()?;
+                let ip = match ip_bytes.len() {
+                    4 => IpAddr::V4(Ipv4Addr::new(
+                        ip_bytes[0],
+                        ip_bytes[1],
+                        ip_bytes[2],
+                        ip_bytes[3],
+                    )),
+                    16 => {
+                        let mut arr = [0u8; 16];
+                        arr.copy_from_slice(&ip_bytes);
+                        IpAddr::V6(Ipv6Addr::from(arr))
+                    }
+                    _ => return Err(yasna::ASN1Error::new(yasna::ASN1ErrorKind::Invalid)),
+                };
 
-                    let email = seq.next().read_ia5_string()?;
-                    let uri = seq.next().read_ia5_string()?;
-                    let dn = seq.next().read_utf8string()?;
-                    let rid = seq.next().read_utf8string()?;
-                    let on = seq.next().read_utf8string()?;
+                let email = seq.next().read_ia5_string()?;
+                let uri = seq.next().read_ia5_string()?;
+                let dn = seq.next().read_utf8string()?;
+                let rid = seq.next().read_utf8string()?;
+                let on = seq.next().read_utf8string()?;
 
-                    Ok((dns, ip, email, uri, dn, rid, on))
-                })
-            }).map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
+                Ok((dns, ip, email, uri, dn, rid, on))
+            })
+        })
+        .map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
 
         Ok(Self {
             dns_name: dns,

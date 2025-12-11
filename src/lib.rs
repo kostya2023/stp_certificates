@@ -42,7 +42,6 @@ pub mod oid;
 
 /// Types and enums...
 
-
 /// Костыль, но жить можно.
 #[derive(Debug)]
 pub struct ASN1Wrapper(yasna::ASN1Error);

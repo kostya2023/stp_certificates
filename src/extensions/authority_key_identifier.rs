@@ -12,7 +12,10 @@ pub struct AuthorityKeyIdentifier {
 
 impl AuthorityKeyIdentifier {
     pub fn new(hash_algorithm: ObjectIdentifier, key_identifier: Vec<u8>) -> Self {
-        Self { hash_algorithm, key_identifier }
+        Self {
+            hash_algorithm,
+            key_identifier,
+        }
     }
 
     pub fn hash_algorithm(&self) -> ObjectIdentifier {
@@ -43,6 +46,9 @@ impl ExtensionTrait for AuthorityKeyIdentifier {
             })
         })
         .map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
-        Ok(Self { hash_algorithm: result.0, key_identifier: result.1 })
+        Ok(Self {
+            hash_algorithm: result.0,
+            key_identifier: result.1,
+        })
     }
 }

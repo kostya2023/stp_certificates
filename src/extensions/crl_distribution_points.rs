@@ -10,7 +10,9 @@ pub struct CRLDistributionPoints {
 
 impl CRLDistributionPoints {
     pub fn new(uri: &str) -> Self {
-        Self { uri: uri.to_string() }
+        Self {
+            uri: uri.to_string(),
+        }
     }
 
     pub fn uri(&self) -> String {
@@ -35,6 +37,6 @@ impl ExtensionTrait for CRLDistributionPoints {
             })
         })
         .map_err(|e| Error::ASN1Error(crate::ASN1Wrapper(e)))?;
-        Ok(Self {uri: result})
+        Ok(Self { uri: result })
     }
 }
