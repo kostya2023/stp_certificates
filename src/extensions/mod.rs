@@ -75,3 +75,38 @@ impl Extension {
         Ok(extension)
     }
 }
+
+
+impl Extensions {
+    pub fn new(extensions: Vec<Extension>) -> Self {
+        Self { extensions }
+    }
+
+    pub fn add(&mut self, ext: Extension) {
+        self.extensions.push(ext);
+    }
+
+    pub fn to_der(&self) -> Vec<u8> {
+        yasna::construct_der(|writer| {
+            writer.write_sequence_of(|seq| {
+                for ext in &self.extensions {
+                    seq.next().write_der(&ext.to_der());
+                }
+            });
+        })
+    }
+
+    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+        let extensions = yasna::parse_der(der, |reader| {
+            reader.collect_sequence_of(|seq| {
+                seq.read_der().and_then(|bytes| {
+                    Extension::from_der(&bytes)
+                        .map_err(|_| ASN1Error::new(ASN1ErrorKind::Invalid))
+                })
+            })
+        })
+        .map_err(|e| Error::ASN1Error(ASN1Wrapper(e)))?;
+
+        Ok(Self { extensions })
+    }
+}
