@@ -1,4 +1,4 @@
-// good_api/privatekey.rs
+// highlevel_keys/privatekey.rs
 
 use crate::{
     Error,

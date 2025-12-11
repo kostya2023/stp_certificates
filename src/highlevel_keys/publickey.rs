@@ -1,4 +1,4 @@
-// good_api/publickey.rs
+// highlevel_keys/publickey.rs
 
 use crate::{ASN1Wrapper, Error, highlevel_keys::AlgorithmIdentifier};
 use yasna::{ASN1Error, ASN1ErrorKind};

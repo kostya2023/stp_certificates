@@ -1,3 +1,5 @@
+// algs/mod.rs
+
 pub mod eddsa;
 pub mod fndsa;
 pub mod mldsa;
