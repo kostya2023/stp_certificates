@@ -4,6 +4,7 @@ pub mod distinguished_name;
 pub mod generate;
 pub mod validity;
 pub mod verify;
+pub mod tbs_certificate;
 
 use yasna;
 use yasna::DERWriterSeq;
