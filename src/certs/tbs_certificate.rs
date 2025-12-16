@@ -1,11 +1,11 @@
 // certs/tbs_certificate.rs
 
-use yasna;
 use crate::Error;
 use crate::certs::{Version, distinguished_name::DistinguishedName, validity::Validity};
 use crate::extensions::Extensions;
 use crate::highlevel_keys::AlgorithmIdentifier;
 use crate::highlevel_keys::publickey::SubjectPublicKeyInfo;
+use yasna;
 
 pub struct TbsCertificate {
     version: Version,
@@ -15,7 +15,7 @@ pub struct TbsCertificate {
     validity: Validity,
     subject: DistinguishedName,
     subject_public_key_info: SubjectPublicKeyInfo,
-    extensions: Option<Extensions>
+    extensions: Option<Extensions>,
 }
 
 impl TbsCertificate {
@@ -27,17 +27,17 @@ impl TbsCertificate {
         validity: Validity,
         subject: DistinguishedName,
         subject_public_key_info: SubjectPublicKeyInfo,
-        extensions: Option<Extensions>
+        extensions: Option<Extensions>,
     ) -> Self {
-        Self { 
-            version, 
-            serial_number, 
-            signature, 
-            issuer, 
-            validity, 
-            subject, 
-            subject_public_key_info, 
-            extensions 
+        Self {
+            version,
+            serial_number,
+            signature,
+            issuer,
+            validity,
+            subject,
+            subject_public_key_info,
+            extensions,
         }
     }
 
