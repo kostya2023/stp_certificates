@@ -2,6 +2,7 @@
 
 use crate::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
+use yasna;
 
 pub struct Validity {
     not_before: SystemTime,

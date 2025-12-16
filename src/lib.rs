@@ -1,6 +1,5 @@
 // lib.rs
 use thiserror::Error;
-use yasna;
 
 // Error
 #[derive(Debug, Error)]
@@ -31,6 +30,9 @@ pub enum Error {
     DurationSinceError,
     #[error("Expired error: {0}")]
     CheckExpiredError(String),
+
+    #[error("Unknown OID: {0}")]
+    UnknownOID(String),
 }
 
 // mods
