@@ -3,6 +3,7 @@
 use crate::{ASN1Wrapper, Error, highlevel_keys::AlgorithmIdentifier};
 use yasna::{ASN1Error, ASN1ErrorKind};
 
+#[derive(Debug, Clone)]
 pub struct SubjectPublicKeyInfo {
     pub algorithm: AlgorithmIdentifier,
     pub subject_public_key: Vec<u8>,

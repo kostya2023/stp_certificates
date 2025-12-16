@@ -4,6 +4,7 @@ use crate::Error;
 use crate::extensions::ExtensionTrait;
 use yasna;
 
+#[derive(Debug, Clone)]
 pub struct SubjectKeyIdentifier {
     key_identifier: Vec<u8>,
 }

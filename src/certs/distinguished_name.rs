@@ -3,6 +3,7 @@
 use crate::{Error, certs::write_secific};
 use yasna;
 
+#[derive(Debug, Clone)]
 pub struct DistinguishedName {
     common_name: String,
     country: Option<String>,

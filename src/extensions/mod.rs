@@ -20,12 +20,14 @@ use crate::{ASN1Wrapper, Error};
 use yasna::{ASN1Error, ASN1ErrorKind, models::ObjectIdentifier};
 
 /// Basic extension
+#[derive(Debug, Clone)]
 pub struct Extension {
     pub extn_id: ObjectIdentifier,
     pub critical: bool,
     pub extn_value: Vec<u8>, // OCTET STRING
 }
 
+#[derive(Debug, Clone)]
 pub struct Extensions {
     pub extensions: Vec<Extension>,
 }

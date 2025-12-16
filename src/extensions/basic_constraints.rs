@@ -4,6 +4,7 @@ use crate::Error;
 use crate::extensions::ExtensionTrait;
 use yasna;
 
+#[derive(Debug, Clone)]
 pub struct BasicConstraints {
     ca: bool,
     path_len_constraint: Option<u64>,

@@ -4,6 +4,7 @@ use crate::Error;
 use std::time::{SystemTime, UNIX_EPOCH};
 use yasna;
 
+#[derive(Debug, Clone)]
 pub struct Validity {
     not_before: SystemTime,
     not_after: SystemTime,

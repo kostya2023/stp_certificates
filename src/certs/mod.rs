@@ -10,6 +10,7 @@ use yasna;
 use yasna::DERWriterSeq;
 use yasna::models::ObjectIdentifier;
 
+#[derive(Debug, Clone)]
 pub enum Version {
     V3,
 }

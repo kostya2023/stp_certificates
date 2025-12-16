@@ -4,6 +4,7 @@ use crate::Error;
 use crate::extensions::ExtensionTrait;
 use yasna;
 
+#[derive(Debug, Clone)]
 pub struct CRLDistributionPoints {
     uri: String,
 }

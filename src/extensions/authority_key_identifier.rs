@@ -5,6 +5,7 @@ use crate::extensions::ExtensionTrait;
 use yasna;
 use yasna::models::ObjectIdentifier;
 
+#[derive(Debug, Clone)]
 pub struct AuthorityKeyIdentifier {
     hash_algorithm: ObjectIdentifier,
     key_identifier: Vec<u8>,
