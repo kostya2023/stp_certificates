@@ -33,6 +33,9 @@ pub enum Error {
 
     #[error("Unknown OID: {0}")]
     UnknownOID(String),
+
+    #[error("Error parsing version.")]
+    VersionParsingError,
 }
 
 // mods
