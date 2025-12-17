@@ -8,6 +8,7 @@ use crate::highlevel_keys::publickey::SubjectPublicKeyInfo;
 use yasna;
 use yasna::ASN1ErrorKind;
 
+#[derive(Debug, Clone)]
 pub struct TbsCertificate {
     version: Version,
     serial_number: u64,
