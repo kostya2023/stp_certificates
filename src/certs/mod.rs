@@ -5,6 +5,7 @@ pub mod generate;
 pub mod tbs_certificate;
 pub mod validity;
 pub mod verify;
+pub mod certificate;
 
 use yasna;
 use yasna::DERWriterSeq;
