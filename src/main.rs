@@ -5,20 +5,16 @@ use std::time::{Duration, SystemTime};
 
 use stp_certificates::algs::AlgKeypair;
 use stp_certificates::algs::fndsa::FNDSA512Keypair;
-use stp_certificates::certs::Version;
-use stp_certificates::certs::certificate::Certificate;
+use stp_certificates::certs::generate::CertificateBuilder;
 use stp_certificates::certs::distinguished_name::DistinguishedName;
-use stp_certificates::certs::tbs_certificate::TbsCertificate;
-use stp_certificates::certs::validity::Validity;
 use stp_certificates::extensions::{Extension, ExtensionTrait, Extensions};
 use stp_certificates::highlevel_keys::AlgorithmIdentifier;
 use stp_certificates::highlevel_keys::pem::pem_encode;
-use stp_certificates::highlevel_keys::publickey::SubjectPublicKeyInfo;
 use stp_certificates::{extensions, oid};
 
 fn main() {
     let keypair = FNDSA512Keypair::generate().unwrap();
-    let public_key = keypair.public_key_der().unwrap();
+    // let public_key = keypair.public_key_der().unwrap();
 
     let universal_issuer = DistinguishedName::new(
         "Test Certificate".to_string(), 
@@ -49,24 +45,27 @@ fn main() {
 
     let extensions = Extensions::new(vec![extension]);
 
-    let tbs_certificate = TbsCertificate::new(
-        Version::V3, 
-        999999666666444444u64, 
-        AlgorithmIdentifier::new(oid::FNDSA_512.clone(), None), 
-        universal_issuer.clone(), 
-        Validity::new(SystemTime::now() + Duration::from_secs(10 * 365 * 24 * 60 * 60)), 
-        universal_issuer.clone(), 
-        SubjectPublicKeyInfo::from_der(&public_key).unwrap(), 
+    // Build certificate using CertificateBuilder
+    let spki_der = keypair.public_key_der().unwrap();
+    let sig_alg = AlgorithmIdentifier::new(oid::FNDSA_512.clone(), None);
+
+    let mut builder = CertificateBuilder::new(
+        999999666666444444u64,
+        sig_alg.clone(),
+        &spki_der,
+        SystemTime::now() + Duration::from_secs(10 * 365 * 24 * 60 * 60),
         Some(extensions),
-    );
+    )
+    .expect("builder new");
 
-    let signature_value = keypair.sign(&tbs_certificate.to_der().unwrap()).unwrap();
+    builder
+        .issuer(universal_issuer.clone())
+        .subject(universal_issuer.clone());
 
-    let certificate = Certificate::new(
-        tbs_certificate, 
-        AlgorithmIdentifier::new(oid::FNDSA_512.clone(), None), 
-        &signature_value
-    );
+    let priv_der = keypair.private_key_der().unwrap();
+    builder.sign(&priv_der).unwrap();
+
+    let certificate = builder.as_struct().expect("signed certificate");
 
 
     println!("der encoded:\n {:?}\n", certificate.to_der().unwrap());
