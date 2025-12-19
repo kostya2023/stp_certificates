@@ -1,11 +1,12 @@
 // main.rs (unused)
 
 use std::net::Ipv4Addr;
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 
 use stp_certificates::algs::AlgKeypair;
-use stp_certificates::algs::eddsa::Ed25519;
+use stp_certificates::algs::fndsa::FNDSA512Keypair;
 use stp_certificates::certs::Version;
+use stp_certificates::certs::certificate::Certificate;
 use stp_certificates::certs::distinguished_name::DistinguishedName;
 use stp_certificates::certs::tbs_certificate::TbsCertificate;
 use stp_certificates::certs::validity::Validity;
@@ -16,7 +17,7 @@ use stp_certificates::highlevel_keys::publickey::SubjectPublicKeyInfo;
 use stp_certificates::{extensions, oid};
 
 fn main() {
-    let keypair = Ed25519::generate().unwrap();
+    let keypair = FNDSA512Keypair::generate().unwrap();
     let public_key = keypair.public_key_der().unwrap();
 
     let universal_issuer = DistinguishedName::new(
@@ -51,16 +52,25 @@ fn main() {
     let tbs_certificate = TbsCertificate::new(
         Version::V3, 
         999999666666444444u64, 
-        AlgorithmIdentifier::new(oid::ED25519.clone(), None), 
+        AlgorithmIdentifier::new(oid::FNDSA_512.clone(), None), 
         universal_issuer.clone(), 
-        Validity::new(SystemTime::now()), 
+        Validity::new(SystemTime::now() + Duration::from_secs(10 * 365 * 24 * 60 * 60)), 
         universal_issuer.clone(), 
         SubjectPublicKeyInfo::from_der(&public_key).unwrap(), 
         Some(extensions),
     );
 
-    println!("der encoded:\n {:?}\n", tbs_certificate.to_der().unwrap());
-    let pem = pem_encode("CERTIFICATE", tbs_certificate.to_der().unwrap());
+    let signature_value = keypair.sign(&tbs_certificate.to_der().unwrap()).unwrap();
+
+    let certificate = Certificate::new(
+        tbs_certificate, 
+        AlgorithmIdentifier::new(oid::FNDSA_512.clone(), None), 
+        &signature_value
+    );
+
+
+    println!("der encoded:\n {:?}\n", certificate.to_der().unwrap());
+    let pem = pem_encode("CERTIFICATE", certificate.to_der().unwrap());
     println!("pem encoded:\n {}\n", pem);
     
 }
