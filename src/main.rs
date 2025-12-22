@@ -1,7 +1,7 @@
 // main.rs (unused)
 
 use std::net::Ipv4Addr;
-use std::time::{Duration, SystemTime};
+use std::time::{UNIX_EPOCH, SystemTime};
 
 use stp_certificates::algs::AlgKeypair;
 use stp_certificates::algs::fndsa::FNDSA512Keypair;
@@ -45,6 +45,8 @@ fn main() {
 
     let extensions = Extensions::new(vec![extension]);
 
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+
     // Build certificate using CertificateBuilder
     let spki_der = keypair.public_key_der().unwrap();
     let sig_alg = AlgorithmIdentifier::new(oid::FNDSA_512.clone(), None);
@@ -53,7 +55,8 @@ fn main() {
         999999666666444444u64,
         sig_alg.clone(),
         &spki_der,
-        SystemTime::now() + Duration::from_secs(10 * 365 * 24 * 60 * 60),
+        now,
+        now + 10 * 365 * 24 * 60 * 60,
         Some(extensions),
     )
     .expect("builder new");
@@ -68,8 +71,8 @@ fn main() {
     let certificate = builder.as_struct().expect("signed certificate");
 
 
-    println!("der encoded:\n {:?}\n", certificate.to_der().unwrap());
-    let pem = pem_encode("CERTIFICATE", certificate.to_der().unwrap());
+    println!("der encoded:\n {:?}\n", certificate.to_der());
+    let pem = pem_encode("CERTIFICATE", certificate.to_der());
     println!("pem encoded:\n {}\n", pem);
     
 }

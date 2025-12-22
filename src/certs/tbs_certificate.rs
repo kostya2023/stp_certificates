@@ -48,7 +48,7 @@ impl TbsCertificate {
     }
 
     pub fn serial_number(&self) -> u64 {
-        self.serial_number.clone()
+        self.serial_number
     }
 
     pub fn signature(&self) -> AlgorithmIdentifier {
@@ -78,9 +78,9 @@ impl TbsCertificate {
 
 // Serilizaton
 impl TbsCertificate {
-    pub fn to_der(&self) -> Result<Vec<u8>, Error> {
-        let validity_der = self.validity.to_der()?;
-        let result = yasna::construct_der(|writer| {
+    pub fn to_der(&self) -> Vec<u8> {
+        let validity_der = self.validity.to_der();
+        yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {
                 seq.next().write_tagged(yasna::Tag::context(0), |tagged| {
                     tagged.write_i64(self.version.number().clone());
@@ -104,9 +104,7 @@ impl TbsCertificate {
                     });
                 }
             })
-        });
-
-        Ok(result)
+        })
     }
 
     pub fn from_der(der: &[u8]) -> Result<Self, Error> {

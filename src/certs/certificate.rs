@@ -34,16 +34,15 @@ impl Certificate {
 
 // Serilizaton
 impl Certificate {
-    pub fn to_der(&self) -> Result<Vec<u8>, Error> {
-        let tbs_certificate = self.tbs_certificate.to_der()?;
-        let result = yasna::construct_der(|writer| {
+    pub fn to_der(&self) -> Vec<u8> {
+        let tbs_certificate = self.tbs_certificate.to_der();
+        yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {
                 seq.next().write_der(&tbs_certificate);
                 seq.next().write_der(&self.signature_algorithm.to_der());
                 seq.next().write_bitvec_bytes(&self.signature_value, self.signature_value.len() * 8);
             })
-        });
-        Ok(result)
+        })
     }
 
     pub fn from_der(der: Vec<u8>) -> Result<Self, Error> {

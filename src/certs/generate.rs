@@ -11,7 +11,6 @@ use crate::extensions::Extensions;
 use crate::highlevel_keys::publickey::SubjectPublicKeyInfo;
 use crate::highlevel_keys::privatekey::PrivateKeyInfo;
 use crate::highlevel_keys::AlgorithmIdentifier;
-use std::time::SystemTime;
 
 
 pub struct CertificateBuilder {
@@ -31,7 +30,8 @@ impl CertificateBuilder {
         serial_number: u64,
         signature_algorithm: AlgorithmIdentifier,
         subject_public_key_info_der: &[u8],
-        not_after: SystemTime,
+        not_before: u64,
+        not_after: u64,
         extensions: Option<Extensions>,
     ) -> Result<Self, Error> {
         let spki = SubjectPublicKeyInfo::from_der(subject_public_key_info_der)?;
@@ -40,7 +40,7 @@ impl CertificateBuilder {
             version: Version::V3,
             serial_number,
             signature_algorithm,
-            validity: Validity::new(not_after),
+            validity: Validity::new(not_before,not_after),
             subject_public_key_info: spki,
             extensions,
             issuer: None,
@@ -85,7 +85,7 @@ impl CertificateBuilder {
             self.extensions.clone(),
         );
 
-        let tbs_der = tbs.to_der()?;
+        let tbs_der = tbs.to_der();
 
         // Parse private key PKCS#8 (PrivateKeyInfo)
         let private_info = PrivateKeyInfo::from_der(private_key_pkcs8_der)?;
