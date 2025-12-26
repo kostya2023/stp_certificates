@@ -1,10 +1,9 @@
 // extensions/crl_distribution_points.rs
 
-use crate::Error;
-use crate::extensions::ExtensionTrait;
+use crate::{Error, Serilizaton};
 use yasna;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct CRLDistributionPoints {
     uri: String,
 }
@@ -21,7 +20,7 @@ impl CRLDistributionPoints {
     }
 }
 
-impl ExtensionTrait for CRLDistributionPoints {
+impl Serilizaton for CRLDistributionPoints {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {

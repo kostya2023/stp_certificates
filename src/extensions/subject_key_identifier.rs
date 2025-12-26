@@ -1,10 +1,9 @@
 // extensions/subject_key_identifier.rs
 
-use crate::Error;
-use crate::extensions::ExtensionTrait;
+use crate::{Error, Serilizaton};
 use yasna;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct SubjectKeyIdentifier {
     key_identifier: Vec<u8>,
 }
@@ -19,7 +18,7 @@ impl SubjectKeyIdentifier {
     }
 }
 
-impl ExtensionTrait for SubjectKeyIdentifier {
+impl Serilizaton for SubjectKeyIdentifier {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {

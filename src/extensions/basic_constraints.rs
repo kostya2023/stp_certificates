@@ -1,10 +1,9 @@
 // extensions/basic_constraints.rs
 
-use crate::Error;
-use crate::extensions::ExtensionTrait;
+use crate::{Error, Serilizaton};
 use yasna;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct BasicConstraints {
     ca: bool,
     path_len_constraint: Option<u64>,
@@ -27,7 +26,7 @@ impl BasicConstraints {
     }
 }
 
-impl ExtensionTrait for BasicConstraints {
+impl Serilizaton for BasicConstraints {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {

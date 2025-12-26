@@ -1,12 +1,12 @@
 // highlevel_keys/publickey.rs
 
-use crate::{ASN1Wrapper, Error, highlevel_keys::AlgorithmIdentifier};
+use crate::{ASN1Wrapper, Error, Serilizaton, highlevel_keys::AlgorithmIdentifier};
 use yasna::{ASN1Error, ASN1ErrorKind};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct SubjectPublicKeyInfo {
-    pub algorithm: AlgorithmIdentifier,
-    pub subject_public_key: Vec<u8>,
+    algorithm: AlgorithmIdentifier,
+    subject_public_key: Vec<u8>,
 }
 
 impl SubjectPublicKeyInfo {
@@ -17,7 +17,17 @@ impl SubjectPublicKeyInfo {
         }
     }
 
-    pub fn to_der(&self) -> Vec<u8> {
+    pub fn algorithm(&self) -> AlgorithmIdentifier {
+        self.algorithm.clone()
+    }
+
+    pub fn subject_public_key(&self) -> Vec<u8> {
+        self.subject_public_key.clone()
+    }
+}
+
+impl Serilizaton for SubjectPublicKeyInfo {
+    fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {
                 seq.next().write_der(&self.algorithm.to_der().as_slice());
@@ -29,7 +39,7 @@ impl SubjectPublicKeyInfo {
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let info = yasna::parse_der(der, |reader| {
             reader.read_sequence(|seq| {
                 let alg_der = seq.next().read_der()?;

@@ -1,10 +1,9 @@
 // extensions/extended_key_usage.rs
 
-use crate::Error;
-use crate::extensions::ExtensionTrait;
+use crate::{Error, Serilizaton};
 use yasna;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct ExtendedKeyUsage {
     server_auth: bool,
     client_auth: bool,
@@ -44,7 +43,7 @@ impl ExtendedKeyUsage {
     }
 }
 
-impl ExtensionTrait for ExtendedKeyUsage {
+impl Serilizaton for ExtendedKeyUsage {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {

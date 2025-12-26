@@ -1,5 +1,6 @@
 // algs/fndsa.rs
 
+use crate::Serilizaton;
 use crate::algs::AlgKeypair;
 use crate::highlevel_keys::AlgorithmIdentifier;
 use crate::highlevel_keys::privatekey::PrivateKeyInfo;
@@ -59,21 +60,21 @@ impl AlgKeypair for FNDSA512Keypair {
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
         // PKCS#8 check
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(crate::Error::PKCS8VersionInvalid);
         }
-        if private.private_key_algorithm.algorithm != crate::oid::FNDSA_512.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::FNDSA_512.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         // SPKI check
-        if public.algorithm.algorithm != crate::oid::FNDSA_512.clone() {
+        if public.algorithm().algorithm() != crate::oid::FNDSA_512.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -112,7 +113,7 @@ impl AlgKeypair for FNDSA512Keypair {
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, crate::Error> {
         let public_key = PublicKeyF512::from_bytes(
             SubjectPublicKeyInfo::from_der(public_key_der)?
-                .subject_public_key
+                .subject_public_key()
                 .as_slice(),
         )
         .map_err(|_| {
@@ -173,21 +174,21 @@ impl AlgKeypair for FNDSA1024Keypair {
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
         // PKCS#8 check
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(crate::Error::PKCS8VersionInvalid);
         }
-        if private.private_key_algorithm.algorithm != crate::oid::FNDSA_1024.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::FNDSA_1024.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         // SPKI check
-        if public.algorithm.algorithm != crate::oid::FNDSA_1024.clone() {
+        if public.algorithm().algorithm() != crate::oid::FNDSA_1024.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -226,7 +227,7 @@ impl AlgKeypair for FNDSA1024Keypair {
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, crate::Error> {
         let public_key = PublicKeyF1024::from_bytes(
             SubjectPublicKeyInfo::from_der(public_key_der)?
-                .subject_public_key
+                .subject_public_key()
                 .as_slice(),
         )
         .map_err(|_| {

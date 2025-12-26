@@ -9,25 +9,18 @@ pub mod key_usage;
 pub mod subject_alternative_name;
 pub mod subject_key_identifier;
 
-/// trait extension
-pub trait ExtensionTrait: Sized {
-    fn to_der(&self) -> Vec<u8>;
-
-    fn from_der(der: &[u8]) -> Result<Self, Error>;
-}
-
 use crate::{ASN1Wrapper, Error};
 use yasna::{ASN1Error, ASN1ErrorKind, models::ObjectIdentifier};
 
 /// Basic extension
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct Extension {
     pub extn_id: ObjectIdentifier,
     pub critical: bool,
     pub extn_value: Vec<u8>, // OCTET STRING
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct Extensions {
     pub extensions: Vec<Extension>,
 }

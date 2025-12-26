@@ -1,12 +1,11 @@
 // certs/mod.rs
 
+pub mod certificate;
 pub mod distinguished_name;
 pub mod generate;
 pub mod tbs_certificate;
 pub mod validity;
 pub mod verify;
-pub mod certificate;
-
 
 use yasna;
 use yasna::DERWriterSeq;
@@ -14,7 +13,7 @@ use yasna::models::ObjectIdentifier;
 
 use crate::Error;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub enum Version {
     V3,
 }
@@ -34,7 +33,7 @@ impl Version {
     }
 }
 
-pub fn write_secific(seq: &mut DERWriterSeq<'_>, oid: ObjectIdentifier, value: &str) {
+pub fn write_specific(seq: &mut DERWriterSeq<'_>, oid: ObjectIdentifier, value: &str) {
     seq.next().write_sequence(|s| {
         s.next().write_oid(&oid);
         s.next().write_utf8string(value);

@@ -1,9 +1,9 @@
 // certs/distinguished_name.rs
 
-use crate::{Error, certs::write_secific};
+use crate::{Error, Serilizaton, certs::write_specific};
 use yasna;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct DistinguishedName {
     common_name: String,
     country: Option<String>,
@@ -72,37 +72,37 @@ impl DistinguishedName {
 }
 
 // Serilizaton
-impl DistinguishedName {
-    pub fn to_der(&self) -> Vec<u8> {
+impl Serilizaton for DistinguishedName {
+    fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence_of(|seq_of| {
-                write_secific(seq_of, crate::oid::COMMON_NAME.clone(), &self.common_name);
+                write_specific(seq_of, crate::oid::COMMON_NAME.clone(), &self.common_name);
                 if let Some(con) = &self.country {
-                    write_secific(seq_of, crate::oid::COUNTRY.clone(), &con);
+                    write_specific(seq_of, crate::oid::COUNTRY.clone(), &con);
                 }
                 if let Some(sop) = &self.state_or_province {
-                    write_secific(seq_of, crate::oid::STATE.clone(), &sop);
+                    write_specific(seq_of, crate::oid::STATE.clone(), &sop);
                 }
                 if let Some(loc) = &self.locallity {
-                    write_secific(seq_of, crate::oid::LOCALITY.clone(), &loc);
+                    write_specific(seq_of, crate::oid::LOCALITY.clone(), &loc);
                 }
                 if let Some(org) = &self.organization {
-                    write_secific(seq_of, crate::oid::ORGANIZATION.clone(), &org);
+                    write_specific(seq_of, crate::oid::ORGANIZATION.clone(), &org);
                 }
                 if let Some(oru) = &self.organization_unit {
-                    write_secific(seq_of, crate::oid::ORG_UNIT.clone(), &oru);
+                    write_specific(seq_of, crate::oid::ORG_UNIT.clone(), &oru);
                 }
                 if let Some(sta) = &self.street_addres {
-                    write_secific(seq_of, crate::oid::STREET.clone(), &sta);
+                    write_specific(seq_of, crate::oid::STREET.clone(), &sta);
                 }
                 if let Some(snu) = &self.serial_number {
-                    write_secific(seq_of, crate::oid::SERIAL_NUMBER.clone(), &snu);
+                    write_specific(seq_of, crate::oid::SERIAL_NUMBER.clone(), &snu);
                 }
             })
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let result = yasna::parse_der(der, |reader| {
             let pairs = reader.collect_sequence_of(|seq_read| {
                 seq_read.read_sequence(|seq| {

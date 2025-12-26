@@ -1,18 +1,19 @@
 // certs/builder.rs
 
 use crate::Error;
+use crate::Serilizaton;
 use crate::algs::AlgKeypair;
-use crate::certs::tbs_certificate::TbsCertificate;
-use crate::certs::distinguished_name::DistinguishedName;
-use crate::certs::validity::Validity;
 use crate::certs::Version;
 use crate::certs::certificate::Certificate;
+use crate::certs::distinguished_name::DistinguishedName;
+use crate::certs::tbs_certificate::TbsCertificate;
+use crate::certs::validity::Validity;
 use crate::extensions::Extensions;
-use crate::highlevel_keys::publickey::SubjectPublicKeyInfo;
-use crate::highlevel_keys::privatekey::PrivateKeyInfo;
 use crate::highlevel_keys::AlgorithmIdentifier;
+use crate::highlevel_keys::privatekey::PrivateKeyInfo;
+use crate::highlevel_keys::publickey::SubjectPublicKeyInfo;
 
-
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct CertificateBuilder {
     version: Version,
     serial_number: u64,
@@ -40,7 +41,7 @@ impl CertificateBuilder {
             version: Version::V3,
             serial_number,
             signature_algorithm,
-            validity: Validity::new(not_before,not_after),
+            validity: Validity::new(not_before, not_after),
             subject_public_key_info: spki,
             extensions,
             issuer: None,
@@ -96,7 +97,7 @@ impl CertificateBuilder {
 
         let public_der = self.subject_public_key_info.to_der();
 
-        let signature_value = match private_info.private_key_algorithm.algorithm {
+        let signature_value = match private_info.private_key_algorithm().algorithm() {
             a if a == crate::oid::ED25519.clone() => {
                 let kp = crate::algs::eddsa::Ed25519::from_keypair_der(
                     private_key_pkcs8_der.to_vec(),
@@ -191,7 +192,7 @@ impl CertificateBuilder {
             _ => {
                 return Err(Error::UnknownOID(format!(
                     "Unsupported signing algorithm: {:?}",
-                    private_info.private_key_algorithm.algorithm
+                    private_info.private_key_algorithm().algorithm()
                 )));
             }
         };

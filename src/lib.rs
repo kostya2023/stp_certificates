@@ -46,6 +46,12 @@ pub mod highlevel_keys;
 pub mod oid;
 
 /// Types and enums...
+pub trait Serilizaton {
+    fn to_der(&self) -> Vec<u8>;
+    fn from_der(der: &[u8]) -> Result<Self, Error>
+    where
+        Self: Sized;
+}
 
 /// Костыль, но жить можно.
 #[derive(Debug)]

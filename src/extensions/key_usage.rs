@@ -1,10 +1,9 @@
 // extensions/key_usage.rs
 
-use crate::Error;
-use crate::extensions::ExtensionTrait;
+use crate::{Error, Serilizaton};
 use yasna;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct KeyUsage {
     digital_signature: bool,
     key_cert_sign: bool,
@@ -33,7 +32,7 @@ impl KeyUsage {
     }
 }
 
-impl ExtensionTrait for KeyUsage {
+impl Serilizaton for KeyUsage {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {

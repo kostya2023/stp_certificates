@@ -4,19 +4,19 @@ pub mod pem;
 pub mod privatekey;
 pub mod publickey;
 
-use crate::{ASN1Wrapper, Error};
+use crate::{ASN1Wrapper, Error, Serilizaton};
 use yasna::models::ObjectIdentifier;
 use yasna::{ASN1Error, ASN1ErrorKind};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct AttributeValue {
-    pub value: Vec<u8>,
+    value: Vec<u8>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct Attribute {
-    pub attr_type: ObjectIdentifier,
-    pub attr_val: Vec<AttributeValue>,
+    attr_type: ObjectIdentifier,
+    attr_val: Vec<AttributeValue>,
 }
 
 impl AttributeValue {
@@ -26,13 +26,19 @@ impl AttributeValue {
         }
     }
 
-    pub fn to_der(&self) -> Vec<u8> {
+    pub fn value(&self) -> &[u8] {
+        &self.value
+    }
+}
+
+impl Serilizaton for AttributeValue {
+    fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_bytes(&self.value);
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let val = yasna::parse_der(der, |reader| {
             let bytes = reader
                 .read_bytes()
@@ -52,7 +58,17 @@ impl Attribute {
         }
     }
 
-    pub fn to_der(&self) -> Vec<u8> {
+    pub fn attr_type(&self) -> &ObjectIdentifier {
+        &self.attr_type
+    }
+
+    pub fn attr_val(&self) -> &[AttributeValue] {
+        &self.attr_val
+    }
+}
+
+impl Serilizaton for Attribute {
+    fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {
                 seq.next().write_oid(&self.attr_type);
@@ -65,7 +81,7 @@ impl Attribute {
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let attr = yasna::parse_der(der, |reader| {
             reader.read_sequence(|seq| {
                 let attr_type = seq
@@ -93,10 +109,10 @@ impl Attribute {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct AlgorithmIdentifier {
-    pub algorithm: ObjectIdentifier,
-    pub parameters: Option<Vec<u8>>,
+    algorithm: ObjectIdentifier,
+    parameters: Option<Vec<u8>>,
 }
 
 impl AlgorithmIdentifier {
@@ -107,7 +123,17 @@ impl AlgorithmIdentifier {
         }
     }
 
-    pub fn to_der(&self) -> Vec<u8> {
+    pub fn algorithm(&self) -> ObjectIdentifier {
+        self.algorithm.clone()
+    }
+
+    pub fn parameters(&self) -> Option<Vec<u8>> {
+        self.parameters.clone()
+    }
+}
+
+impl Serilizaton for AlgorithmIdentifier {
+    fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|der| {
             der.write_sequence(|seq| {
                 seq.next().write_oid(&self.algorithm);
@@ -118,7 +144,7 @@ impl AlgorithmIdentifier {
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let alg = yasna::parse_der(der, |reader| {
             reader.read_sequence(|seq| {
                 let algorithm = seq

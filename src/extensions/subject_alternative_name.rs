@@ -1,11 +1,10 @@
 // extensions/subject_alternative_name.rs
 
-use crate::Error;
-use crate::extensions::ExtensionTrait;
+use crate::{Error, Serilizaton};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use yasna;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct SubjectAlternativeName {
     pub dns_name: String,
     pub ip_address: IpAddr,
@@ -38,7 +37,7 @@ impl SubjectAlternativeName {
     }
 }
 
-impl ExtensionTrait for SubjectAlternativeName {
+impl Serilizaton for SubjectAlternativeName {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {

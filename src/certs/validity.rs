@@ -1,9 +1,9 @@
 // certs/validity.rs
 
-use crate::Error;
+use crate::{Error, Serilizaton};
 use yasna;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct Validity {
     not_before: u64,
     not_after: u64,
@@ -25,7 +25,18 @@ impl Validity {
         self.not_after
     }
 
-    pub fn to_der(&self) -> Vec<u8> {
+    pub fn check_expired(&self, now: u64) -> Result<bool, Error> {
+        if now < self.not_before || now > self.not_after {
+            return Err(Error::CheckExpiredError("Validity time".to_string()));
+        }
+
+        Ok(true)
+    }
+}
+
+// Serilization
+impl Serilizaton for Validity {
+    fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {
                 seq.next().write_u64(self.not_before);
@@ -34,7 +45,7 @@ impl Validity {
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let (not_before, not_after) = yasna::parse_der(der, |reader| {
             reader.read_sequence(|seq| {
                 let nb = seq.next().read_u64()?;
@@ -48,13 +59,5 @@ impl Validity {
             not_before,
             not_after,
         })
-    }
-
-    pub fn check_expired(&self, now: u64) -> Result<bool, Error> {
-        if now < self.not_before || now > self.not_after {
-            return Err(Error::CheckExpiredError("Validity time".to_string()));
-        }
-
-        Ok(true)
     }
 }

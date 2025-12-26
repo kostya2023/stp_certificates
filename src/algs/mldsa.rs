@@ -1,6 +1,7 @@
 // algs/mldsa.rs
 
 use crate::Error;
+use crate::Serilizaton;
 use crate::algs::AlgKeypair;
 use crate::highlevel_keys::AlgorithmIdentifier;
 use crate::highlevel_keys::privatekey::PrivateKeyInfo;
@@ -68,21 +69,21 @@ impl AlgKeypair for MLDSA44Keypair {
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
         // PKCS#8 check
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(crate::Error::PKCS8VersionInvalid);
         }
-        if private.private_key_algorithm.algorithm != crate::oid::MLDSA_44.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::MLDSA_44.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         // SPKI check
-        if public.algorithm.algorithm != crate::oid::MLDSA_44.clone() {
+        if public.algorithm().algorithm() != crate::oid::MLDSA_44.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -122,7 +123,7 @@ impl AlgKeypair for MLDSA44Keypair {
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, Error> {
         let public_key = PublicKeyD2::from_bytes(
             SubjectPublicKeyInfo::from_der(public_key_der)?
-                .subject_public_key
+                .subject_public_key()
                 .as_slice(),
         )
         .map_err(|_| {
@@ -182,21 +183,21 @@ impl AlgKeypair for MLDSA65Keypair {
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
         // PKCS#8 check
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(crate::Error::PKCS8VersionInvalid);
         }
-        if private.private_key_algorithm.algorithm != crate::oid::MLDSA_65.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::MLDSA_65.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         // SPKI check
-        if public.algorithm.algorithm != crate::oid::MLDSA_65.clone() {
+        if public.algorithm().algorithm() != crate::oid::MLDSA_65.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -236,7 +237,7 @@ impl AlgKeypair for MLDSA65Keypair {
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, Error> {
         let public_key = PublicKeyD3::from_bytes(
             SubjectPublicKeyInfo::from_der(public_key_der)?
-                .subject_public_key
+                .subject_public_key()
                 .as_slice(),
         )
         .map_err(|_| {
@@ -296,21 +297,21 @@ impl AlgKeypair for MLDSA87Keypair {
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
         // PKCS#8 check
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(crate::Error::PKCS8VersionInvalid);
         }
-        if private.private_key_algorithm.algorithm != crate::oid::MLDSA_87.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::MLDSA_87.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         // SPKI check
-        if public.algorithm.algorithm != crate::oid::MLDSA_87.clone() {
+        if public.algorithm().algorithm() != crate::oid::MLDSA_87.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -350,7 +351,7 @@ impl AlgKeypair for MLDSA87Keypair {
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, Error> {
         let public_key = PublicKeyD5::from_bytes(
             SubjectPublicKeyInfo::from_der(public_key_der)?
-                .subject_public_key
+                .subject_public_key()
                 .as_slice(),
         )
         .map_err(|_| {

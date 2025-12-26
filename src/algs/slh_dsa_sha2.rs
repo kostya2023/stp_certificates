@@ -1,6 +1,7 @@
 // algs/slh_dsa_sha2.rs
 
 use crate::Error;
+use crate::Serilizaton;
 use crate::algs::AlgKeypair;
 use crate::highlevel_keys::AlgorithmIdentifier;
 use crate::highlevel_keys::privatekey::PrivateKeyInfo;
@@ -82,19 +83,19 @@ impl AlgKeypair for SLHDSA128FKeypair {
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
         // ----- PKCS8 -----
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(Error::PKCS8VersionInvalid);
         }
 
-        if private.private_key_algorithm.algorithm != crate::oid::SLHDSA_128F.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::SLHDSA_128F.clone() {
             return Err(Error::InvalidAlgorithmError);
         }
 
         // check hasher
         let hasher_oid = read_slhdsa_hasher(
             private
-                .private_key_algorithm
-                .parameters
+                .private_key_algorithm()
+                .parameters()
                 .clone()
                 .ok_or(Error::InvalidAlgorithmError)?,
         )?;
@@ -104,14 +105,14 @@ impl AlgKeypair for SLHDSA128FKeypair {
         }
 
         // ----- SPKI -----
-        if public.algorithm.algorithm != crate::oid::SLHDSA_128F.clone() {
+        if public.algorithm().algorithm() != crate::oid::SLHDSA_128F.clone() {
             return Err(Error::InvalidAlgorithmError);
         }
 
         let hasher_oid_pub = read_slhdsa_hasher(
             public
-                .algorithm
-                .parameters
+                .algorithm()
+                .parameters()
                 .clone()
                 .ok_or(Error::InvalidAlgorithmError)?,
         )?;
@@ -121,8 +122,8 @@ impl AlgKeypair for SLHDSA128FKeypair {
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -157,7 +158,7 @@ impl AlgKeypair for SLHDSA128FKeypair {
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, Error> {
         let public_der = SubjectPublicKeyInfo::from_der(public_key_der)?;
 
-        let pk = PublicKeySDSA128::from_bytes(public_der.subject_public_key.as_slice())
+        let pk = PublicKeySDSA128::from_bytes(public_der.subject_public_key().as_slice())
             .map_err(|_| Error::PublicKeyError("Error restore PK".into()))?;
 
         let sig = DetachedSignatureSDSA128::from_bytes(sign)
@@ -208,17 +209,17 @@ impl AlgKeypair for SLHDSA192FKeypair {
         let private = PrivateKeyInfo::from_der(&private_key)?;
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(Error::PKCS8VersionInvalid);
         }
-        if private.private_key_algorithm.algorithm != crate::oid::SLHDSA_192F.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::SLHDSA_192F.clone() {
             return Err(Error::InvalidAlgorithmError);
         }
 
         let hasher_oid = read_slhdsa_hasher(
             private
-                .private_key_algorithm
-                .parameters
+                .private_key_algorithm()
+                .parameters()
                 .clone()
                 .ok_or(Error::InvalidAlgorithmError)?,
         )?;
@@ -226,14 +227,14 @@ impl AlgKeypair for SLHDSA192FKeypair {
             return Err(Error::InvalidAlgorithmError);
         }
 
-        if public.algorithm.algorithm != crate::oid::SLHDSA_192F.clone() {
+        if public.algorithm().algorithm() != crate::oid::SLHDSA_192F.clone() {
             return Err(Error::InvalidAlgorithmError);
         }
 
         let hasher_oid_pub = read_slhdsa_hasher(
             public
-                .algorithm
-                .parameters
+                .algorithm()
+                .parameters()
                 .clone()
                 .ok_or(Error::InvalidAlgorithmError)?,
         )?;
@@ -242,8 +243,8 @@ impl AlgKeypair for SLHDSA192FKeypair {
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -267,7 +268,7 @@ impl AlgKeypair for SLHDSA192FKeypair {
 
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, Error> {
         let spki = SubjectPublicKeyInfo::from_der(public_key_der)?;
-        let pk = PublicKeySDSA192::from_bytes(spki.subject_public_key.as_slice())
+        let pk = PublicKeySDSA192::from_bytes(spki.subject_public_key().as_slice())
             .map_err(|_| Error::PublicKeyError("Error restore PK".into()))?;
         let sig = DetachedSignatureSDSA192::from_bytes(sign)
             .map_err(|_| Error::VerifySignatureError("Error restore signature".into()))?;
@@ -317,18 +318,18 @@ impl AlgKeypair for SLHDSA256FKeypair {
         let private = PrivateKeyInfo::from_der(&private_key)?;
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(Error::PKCS8VersionInvalid);
         }
 
-        if private.private_key_algorithm.algorithm != crate::oid::SLHDSA_256F.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::SLHDSA_256F.clone() {
             return Err(Error::InvalidAlgorithmError);
         }
 
         let hasher_oid = read_slhdsa_hasher(
             private
-                .private_key_algorithm
-                .parameters
+                .private_key_algorithm()
+                .parameters()
                 .clone()
                 .ok_or(Error::InvalidAlgorithmError)?,
         )?;
@@ -336,14 +337,14 @@ impl AlgKeypair for SLHDSA256FKeypair {
             return Err(Error::InvalidAlgorithmError);
         }
 
-        if public.algorithm.algorithm != crate::oid::SLHDSA_256F.clone() {
+        if public.algorithm().algorithm() != crate::oid::SLHDSA_256F.clone() {
             return Err(Error::InvalidAlgorithmError);
         }
 
         let hasher_oid_pub = read_slhdsa_hasher(
             public
-                .algorithm
-                .parameters
+                .algorithm()
+                .parameters()
                 .clone()
                 .ok_or(Error::InvalidAlgorithmError)?,
         )?;
@@ -352,8 +353,8 @@ impl AlgKeypair for SLHDSA256FKeypair {
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -380,7 +381,7 @@ impl AlgKeypair for SLHDSA256FKeypair {
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, Error> {
         let spki = SubjectPublicKeyInfo::from_der(public_key_der)?;
 
-        let pk = PublicKeySDSA256::from_bytes(spki.subject_public_key.as_slice())
+        let pk = PublicKeySDSA256::from_bytes(spki.subject_public_key().as_slice())
             .map_err(|_| Error::PublicKeyError("Error restore PK".into()))?;
 
         let sig = DetachedSignatureSDSA256::from_bytes(sign)

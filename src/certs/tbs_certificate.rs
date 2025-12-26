@@ -1,14 +1,14 @@
 // certs/tbs_certificate.rs
 
-use crate::Error;
 use crate::certs::{Version, distinguished_name::DistinguishedName, validity::Validity};
 use crate::extensions::Extensions;
 use crate::highlevel_keys::AlgorithmIdentifier;
 use crate::highlevel_keys::publickey::SubjectPublicKeyInfo;
+use crate::{Error, Serilizaton};
 use yasna;
 use yasna::ASN1ErrorKind;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct TbsCertificate {
     version: Version,
     serial_number: u64,
@@ -77,8 +77,8 @@ impl TbsCertificate {
 }
 
 // Serilizaton
-impl TbsCertificate {
-    pub fn to_der(&self) -> Vec<u8> {
+impl Serilizaton for TbsCertificate {
+    fn to_der(&self) -> Vec<u8> {
         let validity_der = self.validity.to_der();
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {
@@ -107,7 +107,7 @@ impl TbsCertificate {
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let result = yasna::parse_der(&der, |reader| {
             let result = reader.read_sequence(|seq| {
                 let version = seq.next().read_tagged(yasna::Tag::context(0), |tagged| {

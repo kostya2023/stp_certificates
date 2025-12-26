@@ -1,11 +1,10 @@
 // extensions/authority_key_identifier.rs
 
-use crate::Error;
-use crate::extensions::ExtensionTrait;
+use crate::{Error, Serilizaton};
 use yasna;
 use yasna::models::ObjectIdentifier;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct AuthorityKeyIdentifier {
     hash_algorithm: ObjectIdentifier,
     key_identifier: Vec<u8>,
@@ -28,7 +27,7 @@ impl AuthorityKeyIdentifier {
     }
 }
 
-impl ExtensionTrait for AuthorityKeyIdentifier {
+impl Serilizaton for AuthorityKeyIdentifier {
     fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|writer| {
             writer.write_sequence(|seq| {

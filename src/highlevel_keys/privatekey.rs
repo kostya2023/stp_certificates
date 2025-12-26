@@ -1,15 +1,16 @@
 // highlevel_keys/privatekey.rs
 
 use crate::{
-    Error,
+    Error, Serilizaton,
     highlevel_keys::{AlgorithmIdentifier, Attribute},
 };
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub struct PrivateKeyInfo {
-    pub version: u64,
-    pub private_key_algorithm: AlgorithmIdentifier,
-    pub private_key: Vec<u8>,
-    pub attributes: Option<Vec<Attribute>>,
+    version: u64,
+    private_key_algorithm: AlgorithmIdentifier,
+    private_key: Vec<u8>,
+    attributes: Option<Vec<Attribute>>,
 }
 
 impl PrivateKeyInfo {
@@ -27,7 +28,25 @@ impl PrivateKeyInfo {
         }
     }
 
-    pub fn to_der(&self) -> Vec<u8> {
+    pub fn version(&self) -> u64 {
+        self.version
+    }
+
+    pub fn private_key_algorithm(&self) -> AlgorithmIdentifier {
+        self.private_key_algorithm.clone()
+    }
+
+    pub fn private_key(&self) -> Vec<u8> {
+        self.private_key.clone()
+    }
+
+    pub fn attributes(&self) -> Option<Vec<Attribute>> {
+        self.attributes.clone()
+    }
+}
+
+impl Serilizaton for PrivateKeyInfo {
+    fn to_der(&self) -> Vec<u8> {
         yasna::construct_der(|der| {
             der.write_sequence(|seq| {
                 seq.next().write_u64(self.version.clone());
@@ -48,7 +67,7 @@ impl PrivateKeyInfo {
         })
     }
 
-    pub fn from_der(der: &[u8]) -> Result<Self, Error> {
+    fn from_der(der: &[u8]) -> Result<Self, Error> {
         let info = yasna::parse_der(der, |reader| {
             reader.read_sequence(|seq| {
                 let version = seq.next().read_u64()?;

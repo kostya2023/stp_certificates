@@ -1,6 +1,7 @@
 // algs/eddsa.rs
 
 use crate::Error;
+use crate::Serilizaton;
 use crate::algs::AlgKeypair;
 use crate::highlevel_keys::AlgorithmIdentifier;
 use crate::highlevel_keys::privatekey::PrivateKeyInfo;
@@ -46,21 +47,21 @@ impl AlgKeypair for Ed25519 {
         let public = SubjectPublicKeyInfo::from_der(&public_key)?;
 
         // PKCS#8 check
-        if private.version != 0 {
+        if private.version() != 0 {
             return Err(crate::Error::PKCS8VersionInvalid);
         }
-        if private.private_key_algorithm.algorithm != crate::oid::ED25519.clone() {
+        if private.private_key_algorithm().algorithm() != crate::oid::ED25519.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         // SPKI check
-        if public.algorithm.algorithm != crate::oid::ED25519.clone() {
+        if public.algorithm().algorithm() != crate::oid::ED25519.clone() {
             return Err(crate::Error::InvalidAlgorithmError);
         }
 
         Ok(Self {
-            public_key: public.subject_public_key,
-            private_key: Zeroizing::new(private.private_key),
+            public_key: public.subject_public_key(),
+            private_key: Zeroizing::new(private.private_key()),
         })
     }
 
@@ -88,7 +89,7 @@ impl AlgKeypair for Ed25519 {
 
     fn verify(public_key_der: &[u8], msg: &[u8], sign: &[u8]) -> Result<bool, Error> {
         let pk: [u8; 32] = SubjectPublicKeyInfo::from_der(&public_key_der)?
-            .subject_public_key
+            .subject_public_key()
             .as_slice()
             .try_into()
             .map_err(|_| {
