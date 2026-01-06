@@ -13,7 +13,7 @@ use stp_certificates::highlevel_keys::pem::pem_encode;
 use stp_certificates::{extensions, oid};
 
 fn main() {
-    let keypair = UniversalKeypair::generate(SignAlgorithm::FnDSA512).unwrap();
+    let keypair = UniversalKeypair::generate(SignAlgorithm::Ed25519).unwrap();
     // let public_key = keypair.public_key_der().unwrap();
 
     let universal_issuer = DistinguishedName::new(
@@ -48,7 +48,7 @@ fn main() {
 
     // Build certificate using CertificateBuilder
     let spki_der = keypair.public_key_der().unwrap();
-    let sig_alg = AlgorithmIdentifier::new(oid::FNDSA_512.clone(), None);
+    let sig_alg = AlgorithmIdentifier::new(oid::ED25519.clone(), None);
 
     let mut builder = CertificateBuilder::new(
         999999666666444444u64,

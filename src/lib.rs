@@ -1,4 +1,5 @@
 // lib.rs
+
 use thiserror::Error;
 
 // Error
