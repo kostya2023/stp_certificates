@@ -12,12 +12,12 @@ use rand::TryRngCore;
 use rand::rngs::OsRng;
 use zeroize::{Zeroize, Zeroizing};
 
-pub struct Ed25519 {
+pub struct Ed25519Keypair {
     pub public_key: Vec<u8>,
     private_key: Zeroizing<Vec<u8>>,
 }
 
-impl AlgKeypair for Ed25519 {
+impl AlgKeypair for Ed25519Keypair {
     fn generate() -> Result<Self, Error> {
         let mut csprng = OsRng;
         let mut random: [u8; 32] = [0; SECRET_KEY_LENGTH];

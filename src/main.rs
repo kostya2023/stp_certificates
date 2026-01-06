@@ -4,8 +4,7 @@ use std::net::Ipv4Addr;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use stp_certificates::Serilizaton;
-use stp_certificates::algs::AlgKeypair;
-use stp_certificates::algs::fndsa::FNDSA512Keypair;
+use stp_certificates::algs::{UniversalKeypair, SignAlgorithm};
 use stp_certificates::certs::distinguished_name::DistinguishedName;
 use stp_certificates::certs::generate::CertificateBuilder;
 use stp_certificates::extensions::{Extension, Extensions};
@@ -14,7 +13,7 @@ use stp_certificates::highlevel_keys::pem::pem_encode;
 use stp_certificates::{extensions, oid};
 
 fn main() {
-    let keypair = FNDSA512Keypair::generate().unwrap();
+    let keypair = UniversalKeypair::generate(SignAlgorithm::FnDSA512).unwrap();
     // let public_key = keypair.public_key_der().unwrap();
 
     let universal_issuer = DistinguishedName::new(

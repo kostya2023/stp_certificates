@@ -2,7 +2,7 @@
 
 use crate::Error;
 use crate::Serilizaton;
-use crate::algs::AlgKeypair;
+use crate::algs::{UniversalKeypair, SignAlgorithm};
 use crate::certs::Version;
 use crate::certs::certificate::Certificate;
 use crate::certs::distinguished_name::DistinguishedName;
@@ -91,111 +91,24 @@ impl CertificateBuilder {
         // Parse private key PKCS#8 (PrivateKeyInfo)
         let private_info = PrivateKeyInfo::from_der(private_key_pkcs8_der)?;
 
-        // We'll pick key implementation based on OID found in private_info
-        // For each supported algorithm we call its `from_keypair_der(private_der, public_der)`
-        // then `sign` the tbs_der.
+        // Determine algorithm from OID
+        let algorithm = SignAlgorithm::algorithm_from_oid(
+            private_info.private_key_algorithm().algorithm().clone(),
+            private_info.private_key_algorithm().parameters().as_ref().and_then(|p| {
+                yasna::parse_ber(p, |reader| reader.read_oid()).ok()
+            }),
+        )?;
 
         let public_der = self.subject_public_key_info.to_der();
 
-        let signature_value = match private_info.private_key_algorithm().algorithm() {
-            a if a == crate::oid::ED25519.clone() => {
-                let kp = crate::algs::eddsa::Ed25519::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                )?;
-                kp.sign(&tbs_der)?
-            }
-            a if a == crate::oid::FNDSA_512.clone() => {
-                let kp = crate::algs::fndsa::FNDSA512Keypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                )?;
-                kp.sign(&tbs_der)?
-            }
-            a if a == crate::oid::FNDSA_1024.clone() => {
-                let kp = crate::algs::fndsa::FNDSA1024Keypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                )?;
-                kp.sign(&tbs_der)?
-            }
-            a if a == crate::oid::MLDSA_44.clone() => {
-                let kp = crate::algs::mldsa::MLDSA44Keypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                )?;
-                kp.sign(&tbs_der)?
-            }
-            a if a == crate::oid::MLDSA_65.clone() => {
-                let kp = crate::algs::mldsa::MLDSA65Keypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                )?;
-                kp.sign(&tbs_der)?
-            }
-            a if a == crate::oid::MLDSA_87.clone() => {
-                let kp = crate::algs::mldsa::MLDSA87Keypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                )?;
-                kp.sign(&tbs_der)?
-            }
-            a if a == crate::oid::SLHDSA_128F.clone() => {
-                // try SHA2 implementation first, fallback to SHAKE
-                let try_sha2 = crate::algs::slh_dsa_sha2::SLHDSA128FKeypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                );
-                match try_sha2 {
-                    Ok(kp) => kp.sign(&tbs_der)?,
-                    Err(_) => {
-                        let kp = crate::algs::slh_dsa_shake::SLHDSA128FKeypair::from_keypair_der(
-                            private_key_pkcs8_der.to_vec(),
-                            public_der.clone(),
-                        )?;
-                        kp.sign(&tbs_der)?
-                    }
-                }
-            }
-            a if a == crate::oid::SLHDSA_192F.clone() => {
-                let try_sha2 = crate::algs::slh_dsa_sha2::SLHDSA192FKeypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                );
-                match try_sha2 {
-                    Ok(kp) => kp.sign(&tbs_der)?,
-                    Err(_) => {
-                        let kp = crate::algs::slh_dsa_shake::SLHDSA192FKeypair::from_keypair_der(
-                            private_key_pkcs8_der.to_vec(),
-                            public_der.clone(),
-                        )?;
-                        kp.sign(&tbs_der)?
-                    }
-                }
-            }
-            a if a == crate::oid::SLHDSA_256F.clone() => {
-                let try_sha2 = crate::algs::slh_dsa_sha2::SLHDSA256FKeypair::from_keypair_der(
-                    private_key_pkcs8_der.to_vec(),
-                    public_der.clone(),
-                );
-                match try_sha2 {
-                    Ok(kp) => kp.sign(&tbs_der)?,
-                    Err(_) => {
-                        let kp = crate::algs::slh_dsa_shake::SLHDSA256FKeypair::from_keypair_der(
-                            private_key_pkcs8_der.to_vec(),
-                            public_der.clone(),
-                        )?;
-                        kp.sign(&tbs_der)?
-                    }
-                }
-            }
-            _ => {
-                return Err(Error::UnknownOID(format!(
-                    "Unsupported signing algorithm: {:?}",
-                    private_info.private_key_algorithm().algorithm()
-                )));
-            }
-        };
+        // Create UniversalKeypair from DER and sign
+        let keypair = UniversalKeypair::from_keypair_der(
+            private_key_pkcs8_der.to_vec(),
+            public_der,
+            algorithm,
+        )?;
+
+        let signature_value = keypair.sign(&tbs_der)?;
 
         let cert = Certificate::new(tbs, self.signature_algorithm.clone(), &signature_value);
         self.certificate = Some(cert);
